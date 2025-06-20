@@ -1,0 +1,4 @@
+[alias]
+t  ="test -- --nocapture" 
+br = "build --release  --bin keyauto_listener"
+bm = "build --release  --bin keyauto"
