@@ -1,4 +1,7 @@
-use crate::{execute_key_press_event, execute_key_release_event, execute_left_button_event, execute_right_button_event, execute_wheel_event};
+use crate::{
+    execute_key_press_event, execute_key_release_event, execute_left_button_event,
+    execute_right_button_event, execute_wheel_event,
+};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::fs::File;
@@ -17,7 +20,7 @@ pub enum Event {
     RightClick { x: i32, y: i32, timestamp: String },
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone ,  Deserialize, Serialize)]
 pub enum RdevEventType {
     ButtonLeft((u32, u32)),
     ButtonRight((u32, u32)),
@@ -26,7 +29,7 @@ pub enum RdevEventType {
     MouseWheel((i32, i32)),
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize,Clone)]
 pub struct RdevEvent {
     pub event_type: RdevEventType,
     pub event_name: String,
@@ -119,7 +122,7 @@ pub fn read_record_key_from_file() -> Result<String, String> {
 }
 
 #[tauri::command]
-pub fn execute_record_key_file() -> Result<String, String> {
+pub fn execute_record_key_file(count: u32) -> Result<String, String> {
     let content = read_record_key_from_file()?;
     if content.is_empty() {
         return Ok(content);
@@ -127,46 +130,43 @@ pub fn execute_record_key_file() -> Result<String, String> {
     let events: RdevRecordEvent = serde_json::from_str(&content).unwrap();
 
     let events = events.events;
-
-    for event in events {
-        match event.event_type {
-            RdevEventType::ButtonLeft((x, y)) => {
-                #[cfg(debug_assertions)]
-                println!("left button ({}, {})", x, y);
-                execute_left_button_event(x, y);
-                sleep(Duration::from_millis(500));
+    for _  in 0..count {
+        events.iter().for_each(|event| {
+            match event.event_type.clone() {
+                RdevEventType::ButtonLeft((x, y)) => {
+                    #[cfg(debug_assertions)]
+                    println!("left button ({}, {})", x, y);
+                    execute_left_button_event(x, y);
+                    sleep(Duration::from_millis(500));
+                }
+                RdevEventType::ButtonRight((x, y)) => {
+                    #[cfg(debug_assertions)]
+                    println!("right button ({}, {})", x, y);
+                    execute_right_button_event(x, y);
+                    sleep(Duration::from_millis(500));
+                }
+                RdevEventType::KeyRelease(key) => {
+                    #[cfg(debug_assertions)]
+                    println!("key press {}", key);
+                    execute_key_release_event(key);
+                    // sleep(Duration::from_millis(300));
+                }
+                RdevEventType::MouseWheel((x, y)) => {
+                    #[cfg(debug_assertions)]
+                    println!("mouse wheel ({}, {})", x, y);
+                    execute_wheel_event(x, y);
+                    sleep(Duration::from_millis(100));
+                }
+                RdevEventType::KeyPress(key) => {
+                    #[cfg(debug_assertions)]
+                    println!("key released {}", key);
+                    execute_key_press_event(key, event.event_name.clone());
+                }
             }
-            RdevEventType::ButtonRight((x, y)) => {
-                #[cfg(debug_assertions)]
-                println!("right button ({}, {})", x, y);
-                execute_right_button_event(x, y);
-                sleep(Duration::from_millis(500));
-            }
-            RdevEventType::KeyRelease(key) => {
-                #[cfg(debug_assertions)]
-                println!("key press {}", key);
-                execute_key_release_event(key);  
-                // sleep(Duration::from_millis(300));
-                
-            }
-            RdevEventType::MouseWheel((x, y)) => {
-                #[cfg(debug_assertions)]
-                println!("mouse wheel ({}, {})", x, y);
-                execute_wheel_event(x, y);
-                sleep(Duration::from_millis(100 ));
-            },
-            RdevEventType::KeyPress(key ) =>{
-                #[cfg(debug_assertions)]
-                println!("key released {}", key);
-                execute_key_press_event(key, event.event_name);
-            }
-        }
+        });
     }
-
     Ok(content)
 }
-
- 
 
 mod test_record_json {
     #[allow(unused)]
@@ -197,12 +197,12 @@ mod test_record_json {
             timestamp: "76543125235".into(),
         })
         .unwrap();
-        execute_record_key_file().unwrap();
+        execute_record_key_file(1).unwrap();
     }
 
     #[test]
     fn test_execute_task() {
         use super::execute_record_key_file;
-        execute_record_key_file().unwrap();
+        execute_record_key_file(1).unwrap();
     }
 }
