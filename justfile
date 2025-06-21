@@ -8,4 +8,5 @@ github :
 
 action :
   git add -A  && git commit -m "update" && git push repo master && git push github master:main
-  git push github   v0.0.1
+  git tag v0.0.2
+  git push github   v0.0.2
