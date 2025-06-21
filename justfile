@@ -7,5 +7,5 @@ github :
 
 
 action :
-  git add -A  && git commit -m "update" && git push origin master && git push github master:main
+  git add -A  && git commit -m "update" && git push repo master && git push github master:main
   git push github   v0.0.1
