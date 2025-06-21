@@ -571,17 +571,60 @@ impl RdevKeyStruct {
     }
 }
 
+mod marco {
+    #[test]
+    fn dry_marco() {
+        macro_rules! find_min {
+            ($x:expr) => {
+                $x
+            };
+            //$($y:expr), +   匹配多个参数,重复序列
+            ($x:expr , $($y:expr), + ) => {{
+                {
+                    std::cmp::min($x, find_min!($($y),+))
+                }
+            }};
+        }
+        let result = find_min!(1, 2, 234, 435);
+        assert_eq!(result, 1);
 
-use std::ops::Deref;
+        use std::ops::{Add, Mul, Sub};
 
-struct CustomBox<T> {
-    value: T,
-}
+        macro_rules! assert_equal_len {
+            // `tt`（token tree，标记树）指示符表示运算符和标记。
+            ($a:ident, $b: ident, $func:ident, $op:tt) => {
+                assert!(
+                    $a.len() == $b.len(),
+                    "{:?}: dimension mismatch: {:?} {:?} {:?}",
+                    stringify!($func),
+                    ($a.len(),),
+                    stringify!($op),
+                    ($b.len(),)
+                );
+            };
+        }
 
-impl<T> Deref for CustomBox<T> {
-    type Target = T;
-    fn deref(&self) -> &Self::Target {
-        &self.value
+        macro_rules! op {
+            ($func:ident, $bound:ident, $op:tt, $method:ident) => {
+                fn $func<T: $bound<T, Output = T> + Copy>(xs: &mut Vec<T>, ys: &Vec<T>) {
+                    assert_equal_len!(xs, ys, $func, $op);
+
+                    for (x, y) in xs.iter_mut().zip(ys.iter()) {
+                        *x = $bound::$method(*x, *y);
+                        // *x = x.$method(*y);
+                    }
+                }
+            };
+        }
+
+        op!(add_assign, Add, +=, add);
+        op!(mul_assign, Mul, *=, mul);
+        op!(sub_assign, Sub, -=, sub);
+
+        add_assign(&mut vec![1, 2, 3], &vec![4, 5, 6]);
+
+        mul_assign(&mut vec![1, 2, 3], &vec![4, 5, 6]);
+
+        sub_assign(&mut vec![1, 2, 3], &vec![4, 5, 6]);
     }
 }
-
