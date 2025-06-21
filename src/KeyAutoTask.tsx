@@ -4,7 +4,14 @@ import {OperationPanel} from "./components/OperationPanel";
 import {invoke} from "@tauri-apps/api/core";
 
 import SeparatorComponent from "@/components/Separator";
-import {EventInfo, useRecordEventStore, useRecordProcessId, useRecordStore, useRunTaskCount} from "@/store";
+import {
+    EventInfo,
+    useRecordEventStore,
+    useRecordProcessId,
+    useRecordStore,
+    useRunTaskCount,
+    useStopExecution
+} from "@/store";
 import {globalListenKeyDown, globalStopListenKeyDown, readRecordFile} from "@/utils/GlobalListen.ts";
 import {Toaster} from "react-hot-toast";
 import {emptyRecordFileToast} from "@/components/Toast.tsx";
@@ -165,14 +172,14 @@ export function KeyAutoTask() {
         }
     }
 
-    const taskCounts =useRunTaskCount(state => state.runTaskCount);
-
+    const taskCounts = useRunTaskCount(state => state.runTaskCount);
+    const needStop = useStopExecution(state => state.needStop);
     const executeRecording = () => {
         if (isRecording) {
             alert("请先停止录制")
             return;
         }
-        readRecordFile(emptyRecordFileToast ,taskCounts );
+        readRecordFile(emptyRecordFileToast, taskCounts, needStop);
     }
 
     return (

@@ -1,8 +1,8 @@
-import {Box, Button, Container, Flex} from "@radix-ui/themes";
+import {Box, Button, Container, Flex, Text} from "@radix-ui/themes";
 import {Label} from "radix-ui";
 import {StartExecuteRecordTask} from "@/components/StartExecuteRecord"
 import {useEffect, useRef, useState} from "react";
-import {useExecutionStatus, useRecordStore, useRunTaskCount} from "@/store";
+import {useExecutionStatus, useRecordStore, useRunTaskCount, useStopExecution} from "@/store";
 import {clearToast, executeToast, notifyStartRecord, notifyStopRecord, stopExecuteToast} from "@/components/Toast.tsx";
 import {Toaster} from "react-hot-toast";
 
@@ -36,9 +36,14 @@ export function OperationPanel(props: OperationPanelProps) {
     // @ts-ignore
     const _origin = executeStatus;
     const setExecute = useExecutionStatus(status => status.setIsExecuting)
+    const needStop = useStopExecution(status => status.needStop);
+    const stopExecuteTask = useStopExecution(status => status.stopExecution);
     const setExecuteStatus = () => {
         if (executeStatus) {
             setExecute(false)
+            if (!needStop) {
+                stopExecuteTask(true);
+            }
         }
     }
 
@@ -56,7 +61,7 @@ export function OperationPanel(props: OperationPanelProps) {
     }, [stopToast]);
 
     const isFirstRun = useRef(0);
-    const   setRunTasks= useRunTaskCount(count => count.setRunTaskCount);
+    const setRunTasks = useRunTaskCount(count => count.setRunTaskCount);
 
     useEffect(() => {
         if (isFirstRun.current <= 2) {
@@ -100,7 +105,7 @@ export function OperationPanel(props: OperationPanelProps) {
                             autoComplete={"off"}
                             autoFocus={true}
                             autoCapitalize={"off"}
-                            hidden={false }
+                            hidden={false}
                             onChange={(e) => {
                                 const val = Number(e.target.value);
                                 if (val < 1) e.target.value = "1";
@@ -113,60 +118,84 @@ export function OperationPanel(props: OperationPanelProps) {
                     </div>
 
                 </Flex>
-
+                <Toaster
+                    position="top-center"
+                    reverseOrder={false}
+                />
                 <Flex direction="row" gap="3" justify="center" align="center">
-                    <Button color="cyan"
-                            style={{margin: "10px", padding: "10px", width: "114px", borderRadius: "10px"}} size="4"
-                            variant="soft" onClick={() => {
-                        if (props.onStartRecording) {
-                            props.onStartRecording()
-                        }
-                        setStartToast(true)
-                    }}>
-                        开始录制
-                    </Button>
-                    <Toaster
-                        position="top-center"
-                        reverseOrder={false}
-                    />
-
-                    <Button color="pink"
-                            style={{margin: "10px", padding: "10px", width: "114px", borderRadius: "10px"}}
-                            size-='4' variant="soft" onClick={(_) => {
-                        if (props.onStopRecording) {
-                            props.onStopRecording();
-                        }
-                        ShowStopToast();
-                    }}>
-                        结束录制
-                    </Button>
-                    <StartExecuteRecordTask ClickEvent={clickEvent}/>
-                    <Box onClick={setExecuteStatus}>
-                        <Button color="violet"
-                                style={{margin: "10px", padding: "10px", width: "114px", borderRadius: "10px"}} size='4'
-                                variant="solid">
-                            结束执行
+                    <Flex direction="column" align="center" gap="1">
+                        <Button color="cyan"
+                                style={{margin: "10px", padding: "10px", width: "114px", borderRadius: "10px"}} size="4"
+                                variant="soft" onClick={() => {
+                            if (props.onStartRecording) {
+                                props.onStartRecording()
+                            }
+                            setStartToast(true)
+                        }}>
+                            开始录制
                         </Button>
-                    </Box>
+                        <Text className="text-white text-lg font-bold">
+                            快捷键F3
+                        </Text>
+                    </Flex>
 
-                    <Button color="indigo"
-                            style={{margin: "10px", padding: "10px", width: "114px", borderRadius: "10px"}}
-                            size='4'
-                            variant="classic" onClick={() => {
-                        if (props.ClearEvent) {
-                            props.ClearEvent();
-                        }
-                        clearToast();
-                    }}>
+                    <Flex direction="column" align="center" gap="1">
 
-                        清空事件
-                    </Button>
+                        <Button color="pink"
+                                style={{margin: "10px", padding: "10px", width: "114px", borderRadius: "10px"}}
+                                size-='4' variant="soft" onClick={(_) => {
+                            if (props.onStopRecording) {
+                                props.onStopRecording();
+                            }
+                            ShowStopToast();
+                        }}>
+                            结束录制
+                        </Button>
+                        <Text className="text-white text-lg font-bold">
+                            快捷键F4
+                        </Text>
+                    </Flex>
+                    <StartExecuteRecordTask ClickEvent={clickEvent}/>
+
+
+
+                    <Flex direction="column" align="center" gap="1">
+
+                        <Box onClick={setExecuteStatus}>
+                            <Button color="violet"
+                                    style={{margin: "10px", padding: "10px", width: "114px", borderRadius: "10px"}}
+                                    size='4'
+                                    variant="solid">
+                                结束执行
+                            </Button>
+                        </Box>
+                        <Text className="text-white text-lg font-bold">
+                            快捷键F6
+                        </Text>
+                    </Flex>
+                    <Flex direction="column" align="center" gap="1">
+
+                        <Button color="indigo"
+                                style={{margin: "10px", padding: "10px", width: "114px", borderRadius: "10px"}}
+                                size='4'
+                                variant="classic" onClick={() => {
+                            if (props.ClearEvent) {
+                                props.ClearEvent();
+                            }
+                            clearToast();
+                        }}>
+
+                            清空事件
+                        </Button>
+                        <Text className="text-white text-lg font-bold"> 快捷键F9</Text>
+
+                    </Flex>
                 </Flex>
 
             </Container>
-        </Box>
 
+
+        </Box>
     );
 
 }
-

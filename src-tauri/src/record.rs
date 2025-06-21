@@ -122,9 +122,9 @@ pub fn read_record_key_from_file() -> Result<String, String> {
 }
 
 #[tauri::command]
-pub fn execute_record_key_file(count: u32) -> Result<String, String> {
+pub fn execute_record_key_file(count: u32,  stop :bool ) -> Result<String, String> {
     let content = read_record_key_from_file()?;
-    if content.is_empty() {
+    if content.is_empty()  || stop{
         return Ok(content);
     }
     let events: RdevRecordEvent = serde_json::from_str(&content).unwrap();
@@ -197,12 +197,12 @@ mod test_record_json {
             timestamp: "76543125235".into(),
         })
         .unwrap();
-        execute_record_key_file(1).unwrap();
+        execute_record_key_file(1 ,false ).unwrap();
     }
 
     #[test]
     fn test_execute_task() {
         use super::execute_record_key_file;
-        execute_record_key_file(1).unwrap();
+        execute_record_key_file(1,false ).unwrap();
     }
 }

@@ -32,23 +32,24 @@ export function globalStopListenKeyDown(pid: number, setProcessId: (id: number) 
     })
 }
 
-export function readRecordFile(emptyRecordFileToast: () => void, count: number) {
+export function readRecordFile(emptyRecordFileToast: () => void, count: number, stopTask: boolean) {
     invoke("read_record_key_from_file",).then((content) => {
         if (!content) {
             emptyRecordFileToast();
             return;
         } else {
-            let HigherOrderCallback = (count: number) => {
-                return () => invokeExecuteTask(count)
+            let HigherOrderCallback = (count: number, stopTask: boolean) => {
+                return () => invokeExecuteTask(count, stopTask)
             }
-            taskRunningToast(HigherOrderCallback(count));
+            taskRunningToast(HigherOrderCallback(count, stopTask));
         }
     })
 }
 
 
-export async  function invokeExecuteTask(count: number) {
-    return invoke("execute_record_key_file", {count}).then(_r => {
+export async function invokeExecuteTask(count: number, stopExecuteTask: boolean = false) {
+
+    return invoke("execute_record_key_file", {count, stop: stopExecuteTask}).then(_r => {
         if (typeof _r === "string" && !_r) {
             console.error("execute_record_key_file result is empty, please try record")
             return false

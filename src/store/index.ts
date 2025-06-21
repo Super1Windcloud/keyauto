@@ -106,3 +106,16 @@ export const useRunTaskCount = create<RunTaskCounts>(
     runTaskCount: 1,
     setRunTaskCount: (count) => set({runTaskCount: count})
 }));
+
+
+interface  StopExecution {
+    needStop: boolean;
+    stopExecution: ( stop : boolean) => void;
+}
+
+export   const useStopExecution = create<StopExecution>(
+    (set) => ({
+        needStop: false,
+        stopExecution: (stop) => set({needStop: stop})
+    })
+);

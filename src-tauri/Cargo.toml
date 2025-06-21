@@ -14,6 +14,9 @@ default-run = "keyauto"
 name = "keyauto"
 path = "src/main.rs"
 
+[[bin]]
+name = "keyauto_hot_key"
+path = "src/bin/hotkey.rs"
 
 [[bin]]
 name = "keyauto_listener"
