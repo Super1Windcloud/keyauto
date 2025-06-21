@@ -570,3 +570,18 @@ impl RdevKeyStruct {
         }
     }
 }
+
+
+use std::ops::Deref;
+
+struct CustomBox<T> {
+    value: T,
+}
+
+impl<T> Deref for CustomBox<T> {
+    type Target = T;
+    fn deref(&self) -> &Self::Target {
+        &self.value
+    }
+}
+
