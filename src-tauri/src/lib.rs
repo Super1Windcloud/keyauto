@@ -6,12 +6,13 @@ use std::path::Path;
 pub mod listen;
 pub mod record;
 pub mod fmt_display;
-pub mod execute; 
+pub mod execute;
 pub use crate::execute::*;
 pub use crate::listen::*;
 #[allow(unused_imports)]
 pub use crate::record::*;
-
+pub mod register;
+pub use crate::register::*;
 
 
 
@@ -49,6 +50,7 @@ fn show_window(window: tauri::Window) -> Result<(), String> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(global_hotkeys_register())
         .invoke_handler(tauri::generate_handler![
             write_to_log_file,
             show_window,
