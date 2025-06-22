@@ -69,7 +69,7 @@ jobs:
       - name: Build Tauri app
         run: |
           pnpm tb   # 即 tauri build
-          find src-tauri/target/release/bundle/
+          ls  src-tauri/target/release/bundle/
         
 
       - name: Upload build artifact
