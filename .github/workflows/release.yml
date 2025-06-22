@@ -67,14 +67,21 @@ jobs:
      
 
       - name: Build Tauri app
-        run: pnpm tb   # 即 tauri build
+        run: |
+          pnpm tb   # 即 tauri build
+          find src-tauri/target/release/bundle/
+        
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: tauri-build-${{ matrix.os }}
           path: |
-            src-tauri/target/release/bundle/**/*
+            src-tauri/target/release/bundle/**/*.deb
+            src-tauri/target/release/bundle/**/*.appimage
+            src-tauri/target/release/bundle/**/*.msi
+            src-tauri/target/release/bundle/**/*.dmg
+            src-tauri/target/release/bundle/**/*.exe
 
   release:
     needs: build
@@ -85,16 +92,6 @@ jobs:
         with:
           path: ./release-artifacts
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
-          body: Release ${{ github.ref_name }}
-
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
