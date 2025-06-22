@@ -494,74 +494,332 @@ impl RdevKeyStruct {
             RdevKeyStruct::Return => Some(enigo::Key::Return),
             RdevKeyStruct::Space => Some(enigo::Key::Space),
             RdevKeyStruct::Tab => Some(enigo::Key::Tab),
-            RdevKeyStruct::PrintScreen => Some(enigo::Key::PrintScr),
-            RdevKeyStruct::ScrollLock => Some(enigo::Key::Scroll),
-            RdevKeyStruct::Pause => Some(enigo::Key::Pause),
-            RdevKeyStruct::NumLock => Some(enigo::Key::Numlock),
+            RdevKeyStruct::PrintScreen => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::PrintScr);
+                #[cfg(target_os = "macos")]
+                return None;
+            }
+            RdevKeyStruct::ScrollLock => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Scroll);
+                #[cfg(target_os = "macos")]
+                None
+            }
+            RdevKeyStruct::Pause => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Pause);
+                #[cfg(target_os = "macos")]
+                None
+            }
+            RdevKeyStruct::NumLock => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Numlock);
+                #[cfg(target_os = "macos")]
+                None
+            }
             RdevKeyStruct::BackQuote => Some(enigo::Key::Unicode('`')),
-            RdevKeyStruct::Num1 => Some(enigo::Key::Num1),
-            RdevKeyStruct::Num2 => Some(enigo::Key::Num2),
-            RdevKeyStruct::Num3 => Some(enigo::Key::Num3),
-            RdevKeyStruct::Num4 => Some(enigo::Key::Num4),
-            RdevKeyStruct::Num5 => Some(enigo::Key::Num5),
-            RdevKeyStruct::Num6 => Some(enigo::Key::Num6),
-            RdevKeyStruct::Num7 => Some(enigo::Key::Num7),
-            RdevKeyStruct::Num8 => Some(enigo::Key::Num8),
-            RdevKeyStruct::Num9 => Some(enigo::Key::Num9),
-            RdevKeyStruct::Num0 => Some(enigo::Key::Num0),
+            RdevKeyStruct::Num1 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Numpad1);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('1'))
+            }
+            RdevKeyStruct::Num2 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Numpad2);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('2'))
+            }
+            RdevKeyStruct::Num3 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Numpad3);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('3'))
+            }
+            RdevKeyStruct::Num4 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Numpad4);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('4'))
+            }
+            RdevKeyStruct::Num5 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Numpad5);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('5'))
+            }
+            RdevKeyStruct::Num6 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Numpad6);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('6'))
+            }
+            RdevKeyStruct::Num7 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Numpad7);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('7'))
+            }
+            RdevKeyStruct::Num8 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Numpad8);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('8'))
+            }
+            RdevKeyStruct::Num9 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Numpad9);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('9'))
+            }
+            RdevKeyStruct::Num0 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Numpad0);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('0'))
+            }
             RdevKeyStruct::Minus => Some(enigo::Key::Unicode('-')),
             RdevKeyStruct::Equal => Some(enigo::Key::Unicode('=')),
-            RdevKeyStruct::KeyQ => Some(enigo::Key::Q),
-            RdevKeyStruct::KeyW => Some(enigo::Key::W),
-            RdevKeyStruct::KeyE => Some(enigo::Key::E),
-            RdevKeyStruct::KeyR => Some(enigo::Key::R),
-            RdevKeyStruct::KeyT => Some(enigo::Key::T),
-            RdevKeyStruct::KeyY => Some(enigo::Key::Y),
-            RdevKeyStruct::KeyU => Some(enigo::Key::U),
-            RdevKeyStruct::KeyI => Some(enigo::Key::I),
-            RdevKeyStruct::KeyO => Some(enigo::Key::O),
-            RdevKeyStruct::KeyP => Some(enigo::Key::P),
+            RdevKeyStruct::KeyQ => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Q);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('q'))
+            }
+            RdevKeyStruct::KeyW => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::W);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('w'))
+            }
+            RdevKeyStruct::KeyE => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::E);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('e'))
+            }
+            RdevKeyStruct::KeyR => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::R);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('r'))
+            }
+            RdevKeyStruct::KeyT => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::T);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('t'))
+            }
+            RdevKeyStruct::KeyY => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Y);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('y'))
+            }
+            RdevKeyStruct::KeyU => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::U);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('u'))
+            }
+            RdevKeyStruct::KeyI => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::I);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('i'))
+            }
+            RdevKeyStruct::KeyO => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::O);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('o'))
+            }
+            RdevKeyStruct::KeyP => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::P);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('p'))
+            }
+
             RdevKeyStruct::LeftBracket => Some(enigo::Key::Unicode('[')),
             RdevKeyStruct::RightBracket => Some(enigo::Key::Unicode(']')),
-            RdevKeyStruct::KeyA => Some(enigo::Key::A),
-            RdevKeyStruct::KeyS => Some(enigo::Key::S),
-            RdevKeyStruct::KeyD => Some(enigo::Key::D),
-            RdevKeyStruct::KeyF => Some(enigo::Key::F),
-            RdevKeyStruct::KeyG => Some(enigo::Key::G),
-            RdevKeyStruct::KeyH => Some(enigo::Key::H),
-            RdevKeyStruct::KeyJ => Some(enigo::Key::J),
-            RdevKeyStruct::KeyK => Some(enigo::Key::K),
-            RdevKeyStruct::KeyL => Some(enigo::Key::L),
+            RdevKeyStruct::KeyA => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::A);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('a'))
+            }
+            RdevKeyStruct::KeyS => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::S);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('s'))
+            }
+            RdevKeyStruct::KeyD => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::D);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('d'))
+            }
+            RdevKeyStruct::KeyF => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::F);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('f'))
+            }
+            RdevKeyStruct::KeyG => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::G);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('g'))
+            }
+            RdevKeyStruct::KeyH => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::H);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('h'))
+            }
+            RdevKeyStruct::KeyJ => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::J);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('j'))
+            }
+            RdevKeyStruct::KeyK => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::K);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('k'))
+            }
+            RdevKeyStruct::KeyL => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::L);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('l'))
+            }
+
             RdevKeyStruct::SemiColon => Some(enigo::Key::Unicode(';')),
             RdevKeyStruct::Quote => Some(enigo::Key::Unicode('\'')), //单引号
             RdevKeyStruct::BackSlash => Some(enigo::Key::Unicode('\\')), // 反斜杠
             RdevKeyStruct::IntlBackslash => Some(enigo::Key::Unicode('\\')),
-            RdevKeyStruct::KeyZ => Some(enigo::Key::Z),
-            RdevKeyStruct::KeyX => Some(enigo::Key::X),
-            RdevKeyStruct::KeyC => Some(enigo::Key::C),
-            RdevKeyStruct::KeyV => Some(enigo::Key::V),
-            RdevKeyStruct::KeyB => Some(enigo::Key::B),
-            RdevKeyStruct::KeyN => Some(enigo::Key::N),
-            RdevKeyStruct::KeyM => Some(enigo::Key::M),
+            RdevKeyStruct::KeyZ => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Z);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('z'))
+            }
+            RdevKeyStruct::KeyX => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::X);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('x'))
+            }
+            RdevKeyStruct::KeyC => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::C);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('c'))
+            }
+            RdevKeyStruct::KeyV => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::V);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('v'))
+            }
+            RdevKeyStruct::KeyB => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::B);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('b'))
+            }
+            RdevKeyStruct::KeyN => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::N);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('n'))
+            }
+            RdevKeyStruct::KeyM => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::M);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('m'))
+            }
+
             RdevKeyStruct::Comma => Some(enigo::Key::Unicode(',')),
             RdevKeyStruct::Dot => Some(enigo::Key::Unicode('.')),
             RdevKeyStruct::Slash => Some(enigo::Key::Unicode('/')),
-            RdevKeyStruct::Insert => Some(enigo::Key::Insert),
+            RdevKeyStruct::Insert => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Insert);
+                #[cfg(target_os = "macos")]
+                None
+            }
             RdevKeyStruct::KpReturn => Some(enigo::Key::Return),
             RdevKeyStruct::KpMinus => Some(enigo::Key::Unicode('-')),
             RdevKeyStruct::KpPlus => Some(enigo::Key::Unicode('+')),
             RdevKeyStruct::KpMultiply => Some(enigo::Key::Unicode('*')),
             RdevKeyStruct::KpDivide => Some(enigo::Key::Unicode('/')),
-            RdevKeyStruct::Kp0 => Some(enigo::Key::Num0),
-            RdevKeyStruct::Kp1 => Some(enigo::Key::Num1),
-            RdevKeyStruct::Kp2 => Some(enigo::Key::Num2),
-            RdevKeyStruct::Kp3 => Some(enigo::Key::Num3),
-            RdevKeyStruct::Kp4 => Some(enigo::Key::Num4),
-            RdevKeyStruct::Kp5 => Some(enigo::Key::Num5),
-            RdevKeyStruct::Kp6 => Some(enigo::Key::Num6),
-            RdevKeyStruct::Kp7 => Some(enigo::Key::Num7),
-            RdevKeyStruct::Kp8 => Some(enigo::Key::Num8),
-            RdevKeyStruct::Kp9 => Some(enigo::Key::Num9),
+            RdevKeyStruct::Kp0 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Num1);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('0'))
+            }
+            RdevKeyStruct::Kp1 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Num2);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('1'))
+            }
+            RdevKeyStruct::Kp2 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Num3);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('2'))
+            }
+            RdevKeyStruct::Kp3 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Num4);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('3'))
+            }
+            RdevKeyStruct::Kp4 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Num5);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('4'))
+            }
+            RdevKeyStruct::Kp5 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Num6);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('5'))
+            }
+            RdevKeyStruct::Kp6 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Num7);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('6'))
+            }
+            RdevKeyStruct::Kp7 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Num8);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('7'))
+            }
+            RdevKeyStruct::Kp8 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Num9);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('8'))
+            }
+            RdevKeyStruct::Kp9 => {
+                #[cfg(target_os = "windows")]
+                return Some(enigo::Key::Num0);
+                #[cfg(target_os = "macos")]
+                Some(enigo::Key::Unicode('9'))
+            }
             RdevKeyStruct::KpDelete => Some(enigo::Key::Delete),
             RdevKeyStruct::Function => None,
             RdevKeyStruct::Unknown(_) => None,
