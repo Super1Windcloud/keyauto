@@ -1,5 +1,10 @@
 name: Build & Release Tauri App
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+
 on:
   push:
     tags:
@@ -87,13 +92,17 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
           body: Release ${{ github.ref_name }}
+
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Release Assets
-        uses: actions/upload-release-asset@v1
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release-artifacts
-          asset_name: tauri-build-${{ matrix.os }}.zip
-          asset_content_type: application/zip
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: Release ${{ github.ref_name }}
+          files: |
+            ./release-artifacts/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
