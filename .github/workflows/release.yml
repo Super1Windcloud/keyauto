@@ -39,22 +39,29 @@ jobs:
         run: pnpm install
 
 
-      - name: Install Ubuntu  build dependencies
+      - name: Install Ubuntu  build dependencies source list
+        if: runner.os == 'Linux'
+        run: |
+          sudo tee /etc/apt/sources.list <<EOF
+          deb http://archive.ubuntu.com/ubuntu jammy main restricted universe multiverse
+          deb http://archive.ubuntu.com/ubuntu jammy-updates main restricted universe multiverse
+          deb http://archive.ubuntu.com/ubuntu jammy-backports main restricted universe multiverse
+          deb http://security.ubuntu.com/ubuntu jammy-security main restricted universe multiverse
+          EOF
+          
+
+      - name: Install Archlinux build dependencies
         if: runner.os == 'Linux'
         run: |
           sudo add-apt-repository universe
           sudo add-apt-repository restricted
           sudo add-apt-repository multiverse
           sudo apt update
-          sudo apt install libwebkit2gtk-4.0-dev \
-          build-essential \
-          curl \
-          wget \
-          file \
-          libssl-dev \
-          libgtk-3-dev \
-          libayatana-appindicator3-dev \
-          librsvg2-dev
+          sudo apt install libwebkit2gtk-4.0-dev 
+          sudo apt install  build-essential 
+          sudo apt install curl wget file 
+          sudo apt install libssl-dev libgtk-3-dev 
+          sudo apt install libayatana-appindicator3-dev  librsvg2-dev
 
      
 
