@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest,archlinux-latest ]
+        os: [ archlinux-latest, windows-latest, macos-latest,archlinux-latest ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,6 +19,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 22
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: rustfmt, clippy
 
 
       - name: Install pnpm
@@ -33,36 +39,36 @@ jobs:
         run: pnpm install
 
 
-      - name: Install Ubuntu  build dependencies
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt update
-          sudo apt install libwebkit2gtk-4.0-dev \
-          build-essential \
-          curl \
-          wget \
-          file \
-          libssl-dev \
-          libgtk-3-dev \
-          libayatana-appindicator3-dev \
-          librsvg2-dev
-
-#      - name: Install archlinux  build dependencies
+#      - name: Install Ubuntu  build dependencies
 #        if: runner.os == 'Linux'
 #        run: |
-#          sudo pacman -Syu
-#          sudo pacman -S --needed \
-#          webkit2gtk \
-#          base-devel \
+#          sudo apt update
+#          sudo apt install libwebkit2gtk-4.0-dev \
+#          build-essential \
 #          curl \
 #          wget \
 #          file \
-#          openssl \
-#          appmenu-gtk-module \
-#          gtk3 \
-#          libappindicator-gtk3 \
-#          librsvg \
-#          libvips
+#          libssl-dev \
+#          libgtk-3-dev \
+#          libayatana-appindicator3-dev \
+#          librsvg2-dev
+
+      - name: Install archlinux  build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo pacman -Syu
+          sudo pacman -S --needed \
+          webkit2gtk \
+          base-devel \
+          curl \
+          wget \
+          file \
+          openssl \
+          appmenu-gtk-module \
+          gtk3 \
+          libappindicator-gtk3 \
+          librsvg \
+          libvips
       
 
       - name: Build Tauri app
