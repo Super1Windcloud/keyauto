@@ -32,7 +32,7 @@ fn get_process_id(process_name: &str) -> Option<u32> {
 #[tauri::command]
 pub fn global_listen_key_down() -> Result<u32, String> {
     let temp_bin = std::env::temp_dir().join("keyauto_listener.exe");
-    if !temp_bin.exists()   {
+    if !temp_bin.exists() {
         let mut file = std::fs::File::create(&temp_bin).unwrap();
         file.write_all(LISTENER_EXE).unwrap();
         file.flush().unwrap();
@@ -43,12 +43,18 @@ pub fn global_listen_key_down() -> Result<u32, String> {
         return Ok(pid);
     }
 
-    let child = process::Command::new(temp_bin)
+    let mut child = process::Command::new(temp_bin)
         .spawn()
         .expect("Failed to execute child");
 
     let pid = child.id();
     println!("Listening on process PID: {}", pid);
+    // ✅ 后台线程等待子进程退出并同步状态
+    std::thread::spawn(move || {
+        let status = child.wait().expect("子进程等待失败");
+        println!("监听器已退出，状态: {:?}", status);
+    });
+    
     Ok(pid)
 }
 

@@ -3,18 +3,16 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::Path;
 
+pub mod execute;
+pub mod fmt_display;
 pub mod listen;
 pub mod record;
-pub mod fmt_display;
-pub mod execute;
 pub use crate::execute::*;
 pub use crate::listen::*;
 #[allow(unused_imports)]
 pub use crate::record::*;
 pub mod register;
 pub use crate::register::*;
-
-
 
 #[tauri::command]
 fn write_to_log_file(message: &str) -> Result<(), String> {
@@ -50,19 +48,22 @@ fn show_window(window: tauri::Window) -> Result<(), String> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .plugin(global_hotkeys_register())
         .invoke_handler(tauri::generate_handler![
             write_to_log_file,
             show_window,
             init_record_key_file,
-            save_event,
             execute_record_key_file,
             global_listen_key_down,
             global_listen_left_click,
             global_listen_right_click,
             global_stop_listen_key_down,
-            read_record_key_from_file
+            read_record_key_from_file,
+            output_run_task_count_config
         ])
+        .setup(|app| {
+            global_hotkeys_register(app);
+            return Ok(());
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

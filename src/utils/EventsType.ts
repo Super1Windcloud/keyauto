@@ -18,7 +18,8 @@ export type RecordEventsArr = {
 }
 
 export  type RecordEventsType = {
-    events: RecordEventsArr[]
+    events: RecordEventsArr[],
+    run_task_count : number
 }
 export type RecordType =
     | { type: 'KeyPress'; value: string }

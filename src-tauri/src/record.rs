@@ -1,26 +1,16 @@
-use crate::{
-    execute_key_press_event, execute_key_release_event, execute_left_button_event,
-    execute_right_button_event, execute_wheel_event,
-};
+use crate::{execute_key_press_event, execute_key_release_event, execute_left_button_event, execute_right_button_event, execute_wheel_event, IS_EXECUTING};
+use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::fs::File;
 use std::io::Write;
+use std::sync::Mutex;
 use std::thread::sleep;
 use std::time::Duration;
 
-#[derive(Debug, Deserialize, Serialize)]
-#[serde(tag = "type")] // 使用 "type" 字段区分事件类型
-pub enum Event {
-    #[serde(rename = "keydown")]
-    KeyDown { key: String, timestamp: String },
-    #[serde(rename = "click")]
-    Click { x: i32, y: i32, timestamp: String },
-    #[serde(rename = "right-click")]
-    RightClick { x: i32, y: i32, timestamp: String },
-}
+pub static SHORTCUT_STOP: Lazy<Mutex<bool>> = Lazy::new(|| Mutex::new(false));
 
-#[derive(Debug, Clone ,  Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum RdevEventType {
     ButtonLeft((u32, u32)),
     ButtonRight((u32, u32)),
@@ -29,43 +19,18 @@ pub enum RdevEventType {
     MouseWheel((i32, i32)),
 }
 
-#[derive(Debug, Deserialize, Serialize,Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct RdevEvent {
     pub event_type: RdevEventType,
     pub event_name: String,
 }
 
 #[derive(Debug, Deserialize, Serialize, Default)]
-pub struct RecordEvent {
-    events: Vec<Event>,
-}
-
-#[derive(Debug, Deserialize, Serialize, Default)]
 pub struct RdevRecordEvent {
-    events: Vec<RdevEvent>,
-}
+    #[serde(default)] // field not exist in json, default None
+    pub(crate) run_task_count: Option<u32>,
 
-#[tauri::command]
-pub fn save_event(event: Event) -> Result<(), String> {
-    let origin_content = read_record_key_from_file().unwrap_or_default();
-    let record_event: RecordEvent = serde_json::from_str(&origin_content).unwrap_or_default();
-    #[cfg(debug_assertions)]
-    println!("{:?}", record_event.events);
-
-    let mut events = if record_event.events.iter().len() == 0 {
-        vec![]
-    } else {
-        record_event.events
-    };
-
-    events.push(event);
-    let json_obj = json!({
-        "events" : events
-    });
-    let content = serde_json::to_string_pretty(&json_obj).map_err(|e| e.to_string())?;
-
-    write_record_key_to_file(content.as_str())?;
-    Ok(())
+    pub(crate) events: Vec<RdevEvent>,
 }
 
 pub fn save_event_backend(event: RdevEvent) -> Result<(), String> {
@@ -122,15 +87,20 @@ pub fn read_record_key_from_file() -> Result<String, String> {
 }
 
 #[tauri::command]
-pub fn execute_record_key_file(count: u32,  stop :bool ) -> Result<String, String> {
+pub fn execute_record_key_file(count: u32, stop: bool) -> Result<String, String> {
+    let key_stop_flag = *SHORTCUT_STOP.lock().unwrap();
     let content = read_record_key_from_file()?;
-    if content.is_empty()  || stop{
+    if content.is_empty() || stop || key_stop_flag {
+        *IS_EXECUTING.lock().unwrap() = false;
         return Ok(content);
     }
     let events: RdevRecordEvent = serde_json::from_str(&content).unwrap();
 
     let events = events.events;
-    for _  in 0..count {
+    for _ in 0..count {
+        if stop || key_stop_flag {
+            break;
+        }
         events.iter().for_each(|event| {
             match event.event_type.clone() {
                 RdevEventType::ButtonLeft((x, y)) => {
@@ -165,6 +135,8 @@ pub fn execute_record_key_file(count: u32,  stop :bool ) -> Result<String, Strin
             }
         });
     }
+
+    *IS_EXECUTING.lock().unwrap() = false; 
     Ok(content)
 }
 
@@ -173,36 +145,8 @@ mod test_record_json {
     use super::*;
 
     #[test]
-    #[ignore]
-    fn test_save_event() {
-        use super::save_event;
-        use super::Event;
-        save_event(Event::KeyDown {
-            key: "s".into(),
-            timestamp: "1647012345678".into(),
-        })
-        .unwrap();
-        save_event(Event::KeyDown {
-            key: "d".into(),
-            timestamp: "1647012342325678".into(),
-        })
-        .unwrap();
-        save_event(Event::KeyDown {
-            key: "f".into(),
-            timestamp: "12341234234".into(),
-        })
-        .unwrap();
-        save_event(Event::KeyDown {
-            key: "g".into(),
-            timestamp: "76543125235".into(),
-        })
-        .unwrap();
-        execute_record_key_file(1 ,false ).unwrap();
-    }
-
-    #[test]
     fn test_execute_task() {
         use super::execute_record_key_file;
-        execute_record_key_file(1,false ).unwrap();
+        execute_record_key_file(1, false).unwrap();
     }
 }

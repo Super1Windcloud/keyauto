@@ -1,4 +1,4 @@
-﻿#![allow(unused_imports)]
+#![allow(unused_imports)]
 use crate::fmt_display::RdevKeyStruct;
 use enigo::Coordinate::Abs;
 use enigo::Direction::Press;
@@ -34,7 +34,7 @@ pub fn execute_key_press_event(key: String, event_name: String) {
         sleep(Duration::from_millis(300));
     } else {
         // ! Text Input
-        execute_text_input_key_event(key ,event_name);
+        execute_text_input_key_event(key, event_name);
     }
 }
 pub fn execute_key_release_event(key: String) {

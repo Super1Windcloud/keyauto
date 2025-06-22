@@ -5,6 +5,8 @@ import {useEffect, useRef, useState} from "react";
 import {useExecutionStatus, useRecordStore, useRunTaskCount, useStopExecution} from "@/store";
 import {clearToast, executeToast, notifyStartRecord, notifyStopRecord, stopExecuteToast} from "@/components/Toast.tsx";
 import {Toaster} from "react-hot-toast";
+import {invoke} from "@tauri-apps/api/core";
+import {RecordEventsType} from "@/utils/EventsType.ts";
 
 interface OperationPanelProps {
     onStartRecording?: () => void;
@@ -62,7 +64,25 @@ export function OperationPanel(props: OperationPanelProps) {
 
     const isFirstRun = useRef(0);
     const setRunTasks = useRunTaskCount(count => count.setRunTaskCount);
+    const runTaskCount: number = useRunTaskCount(count => count.runTaskCount);
 
+    useEffect(() => {
+         invoke("read_record_key_from_file").then((result) => {
+             if (typeof  result === "string") {
+               const obj :RecordEventsType = JSON.parse(result);
+               if (obj.run_task_count) {
+                   setRunTasks(obj.run_task_count);
+               }
+             }
+        });
+    },  []);
+    useEffect(() => {
+        if (runTaskCount > 1) {
+            invoke("output_run_task_count_config", {runTaskCount}).then((data) => {
+                console.log(data);
+            })
+        }
+    }, [runTaskCount]);
     useEffect(() => {
         if (isFirstRun.current <= 2) {
             isFirstRun.current += 1;
@@ -99,7 +119,7 @@ export function OperationPanel(props: OperationPanelProps) {
                             className="inline-flex h-[35px] w-[200px] appearance-none items-center justify-center rounded bg-blackA2 px-2.5 text-[15px] leading-none text-white shadow-[0_0_0_1px] shadow-blackA6 outline-none selection:bg-blackA6 selection:text-white focus:shadow-[0_0_0_2px_black]"
                             type="number"
                             id="firstName"
-                            defaultValue="1"
+                            defaultValue={runTaskCount}
                             min={"1"}
                             max={"10000"}
                             autoComplete={"off"}
@@ -156,7 +176,6 @@ export function OperationPanel(props: OperationPanelProps) {
                         </Text>
                     </Flex>
                     <StartExecuteRecordTask ClickEvent={clickEvent}/>
-
 
 
                     <Flex direction="column" align="center" gap="1">
