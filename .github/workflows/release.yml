@@ -42,6 +42,9 @@ jobs:
       - name: Install Ubuntu  build dependencies
         if: runner.os == 'Linux'
         run: |
+          sudo add-apt-repository universe
+          sudo add-apt-repository restricted
+          sudo add-apt-repository multiverse
           sudo apt update
           sudo apt install libwebkit2gtk-4.0-dev \
           build-essential \
@@ -59,7 +62,6 @@ jobs:
         run: pnpm tb   # 即 tauri build
 
       - name: Upload build artifact
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: tauri-build-${{ matrix.os }}

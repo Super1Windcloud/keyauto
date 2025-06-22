@@ -10,6 +10,12 @@ edition = "2021"
 default-run = "keyauto"
 
 
+[workspace]
+members = [
+    ".",
+    "find_clash_hotkey"
+]
+
 [[bin]]
 name = "keyauto"
 path = "src/main.rs"
@@ -30,7 +36,7 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = []  }
+tauri = { version = "2", features = [] }
 tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -43,16 +49,16 @@ tauri-plugin-global-shortcut = "2.2.1"
 
 
 [profile.dev]
-incremental = true 
-opt-level = 0  
+incremental = true
+opt-level = 0
 debug = true
 codegen-units = 256
 
 
-[profile.release] 
-incremental =true 
-panic = "abort" 
-strip = true  
+[profile.release]
+incremental = true
+panic = "abort"
+strip = true
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-global-shortcut = "2"
