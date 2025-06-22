@@ -21,13 +21,15 @@ jobs:
           node-version: 22
           cache: 'pnpm'
 
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@10.12.1  --activate
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 10
 
-      - name: Install pnpm
-        run: corepack enable && corepack prepare pnpm@10.12.1  --activate
 
       - name: Install dependencies
         run: pnpm install
