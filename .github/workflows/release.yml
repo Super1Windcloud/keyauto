@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        os: [ ubuntu-latest, windows-latest, macos-latest,archlinux-latest ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,16 +29,40 @@ jobs:
         with:
           version: 10
 
-
-
       - name: Install dependencies
         run: pnpm install
 
 
-      - name: Install Linux build dependencies
-        if: runner.os == 'Linux' || runner.os == 'macOS'
+      - name: Install Ubuntu  build dependencies
+        if: runner.os == 'Linux'
         run: |
-          pnpm deps 
+          sudo apt update
+          sudo apt install libwebkit2gtk-4.0-dev \
+          build-essential \
+          curl \
+          wget \
+          file \
+          libssl-dev \
+          libgtk-3-dev \
+          libayatana-appindicator3-dev \
+          librsvg2-dev
+
+#      - name: Install archlinux  build dependencies
+#        if: runner.os == 'Linux'
+#        run: |
+#          sudo pacman -Syu
+#          sudo pacman -S --needed \
+#          webkit2gtk \
+#          base-devel \
+#          curl \
+#          wget \
+#          file \
+#          openssl \
+#          appmenu-gtk-module \
+#          gtk3 \
+#          libappindicator-gtk3 \
+#          librsvg \
+#          libvips
       
 
       - name: Build Tauri app
