@@ -1,14 +1,8 @@
 # Build and Release Folders
-bin-debug/
-bin-release/
-[Oo]bj/
-[Bb]in/
-.settings/
 *.swf
 *.air
 *.ipa
 *.apk
-logs
 *.log
 npm-debug.log*
 yarn-debug.log*
