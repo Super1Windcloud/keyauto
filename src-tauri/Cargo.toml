@@ -10,11 +10,7 @@ edition = "2021"
 default-run = "keyauto"
 
 
-[workspace]
-members = [
-    ".",
-    "find_clash_hotkey"
-]
+
 
 [[bin]]
 name = "keyauto"
